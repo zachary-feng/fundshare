@@ -1,4 +1,5 @@
 package spreadsheet;
+import java.util.*;
 
 public class Transfer {
 	
@@ -8,12 +9,24 @@ public class Transfer {
 	User payee; //mandatory
 	String purpose; //not mandatory
 	
-	
 	public Transfer(int[] date, double amount, User payer, User payee, String purpose) { //some variables may be empty
 		this.date = date;
 		this.amount = amount;
 		this.payer = payer;
 		this.payee = payee;
 		this.purpose = purpose;
+	}
+	
+	public String toString(){
+		String dateA = this.date[0] + "." + this.date[1] + "." + this.date[2];
+		return "Date: " + dateA + " Purpose: " + this.purpose + ". Amount: " + this.amount + ". Payer: " + this.payer.name + ". Recipient: " + this.payee.name;
+	}
+	
+	public boolean equals(Transfer old){
+		if (Arrays.equals(this.date, old.date) && this.amount==old.amount 
+				&& this.payer.name.equals(old.payer.name) && this.payee.name.equals(old.payee.name) && this.purpose.equals(old.purpose)){
+			return true;
+		}
+		else return false;
 	}
 }

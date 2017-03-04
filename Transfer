@@ -3,13 +3,13 @@ package spreadsheet;
 public class Transfer {
 	
 	int[] date = new int[3];
-	int amount;
-	String payer;
-	String payee;
+	double amount;
+	User payer;
+	User payee;
 	String purpose;
 	
 	
-	public Transfer(int[] date, int amount, String payer, String payee, String purpose) {
+	public Transfer(int[] date, double amount, User payer, User payee, String purpose) {
 		this.date = date;
 		this.amount = amount;
 		this.payer = payer;

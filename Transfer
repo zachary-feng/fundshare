@@ -2,7 +2,7 @@ package spreadsheet;
 
 public class Transfer {
 	
-	int[] date = new int[3]; //not mandatory
+	int[] date = new int[3]; //mandatory --> year/month/day
 	double amount; //mandatory
 	User payer; //mandatory
 	User payee; //mandatory

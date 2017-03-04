@@ -2,14 +2,14 @@ package spreadsheet;
 
 public class Transfer {
 	
-	int[] date = new int[3];
-	double amount;
-	User payer;
-	User payee;
-	String purpose;
+	int[] date = new int[3]; //not mandatory
+	double amount; //mandatory
+	User payer; //mandatory
+	User payee; //mandatory
+	String purpose; //not mandatory
 	
 	
-	public Transfer(int[] date, double amount, User payer, User payee, String purpose) {
+	public Transfer(int[] date, double amount, User payer, User payee, String purpose) { //some variables may be empty
 		this.date = date;
 		this.amount = amount;
 		this.payer = payer;

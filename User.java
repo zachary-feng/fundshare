@@ -16,19 +16,19 @@ public class User{
 		this.date = new int[3];
 	}
 	
-	public void addPayment(User payee, Transfer t){ //"this" is paying "t" to "payee"
+	public void addPayment(Transfer t){ //"this" is paying "t" to "payee"
 		//add transfer to transactions history
 		this.transactions.add(t);
-		payee.transactions.add(t);
+		t.payee.transactions.add(t);
 		
 		this.balance = this.balance - t.amount; //decrease this' balance
-		payee.balance = payee.balance + t.amount; //increase payee's balance
+		t.payee.balance = t.payee.balance + t.amount; //increase payee's balance
 		
 		//somehow adjust to chronological order? ORDER BY DATE
 		//records latest transaction inputed date of "this" and "payee"
 			// if can order chronological, retrieve last transaction & input that date
 		this.date = t.date;
-		payee.date = t.date;
+		t.payee.date = t.date;
 	}
 	
 	public void cancelPayment(int index){
@@ -52,23 +52,29 @@ public class User{
 		tPayer.date = tPayer.transactions.get(transactions.size()-1).date;
 		}
 	
-//	public void editPayment(int index, Transfer tNew){ //"edits" by replacing transfer at "index" with tNew that has updated info
-//		//identify users involved
-//		Transfer old = this.transations.get(index);
-//		User tPayee = this.transactions.get(index).payee;
-//		User tPayer = this.transactions.get(index).payer;
-//		
-//		//replacing with updated transfer tNew
-//		if(tPayee.name.equals(this.name)){
-//			tPayer.transactions.set(tPayer.indexOf(old), tNew);
-//			this.transactions.set(index, tNew);
-//		}
-//		else{
-//			tPayee.transactions.set(tPayee.indexOf(old), tNew);
-//			this.transactions.set(index, tNew);
-//		}
-//		//reoder transactions by date for tPayee and tPayer somehow
-//	}
+	public void editPayment(int index, Transfer tNew){ //"edits" by replacing transfer at "index" with tNew that has updated info
+		//identify users involved
+		Transfer old = this.transactions.get(index);
+		User tOPayee = this.transactions.get(index).payee;
+		User tNPayee = tNew.payee;
+		
+		tOPayee.cancelPayment(tOPayee.transactions.indexOf(old)); //cancel transfer to old payee
+		//replacing with updated transfer tNew
+		if(tOPayee.name.equals(tNPayee.name)){ //same user receives the updated transfer
+			tOPayee.addPayment(tNew);
+		}
+		else{ //different user receives the updated transfer
+			tNPayee.addPayment(tNew);
+		}
+		this.cancelPayment(index); //cancel old transfer to "this"
+		this.addPayment(tNew); //add new transfer to "this"
+		
+		//reoder transactions by date for tPayee and tPayer somehow
+	}
+	
+	public void sortTransactions(ArrayList<Transfer> transList){
+		
+	}
 	
 	
 	

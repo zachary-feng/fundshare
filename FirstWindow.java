@@ -17,6 +17,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import java.util.*;
+
 public class FirstWindow extends JFrame  
 {
 	//Create the new cardlayout and main panel for the overall structure
@@ -27,9 +29,10 @@ public class FirstWindow extends JFrame
 	private JPanel firstWindowPane = new JPanel();
 	
 	//Initialize the options in the combo box
-	private String[] names = {"Select User", "Julia", "Zach", "Deif"};
-	private JComboBox nameList = new JComboBox (names);
-	
+	private String storeUser, storePass;
+	private JLabel newPass = new JLabel("Select a new password!");
+	private JTextField newPassEnterHere = new JTextField ();
+	private JComboBox<String> nameList = new JComboBox<String>();
 	//In Main Menu: Username and Password
 	private JPanel passwordPanel = new JPanel();
 	private JLabel username = new JLabel ("Username: ");
@@ -38,11 +41,9 @@ public class FirstWindow extends JFrame
 	private JTextField passInput = new JTextField();
 	private String testUser;
 	private String testPass;
-	private boolean match = false;
 	
 	//Create option to create a new user
 	private JButton addNewUser = new JButton ("Add New User");
-	private String nameSelected = names[0];
 	private String newUserName;
 	private String[] newNameArray; 
 
@@ -63,7 +64,7 @@ public class FirstWindow extends JFrame
 	 
     public FirstWindow()
     {
-    	
+ 
         super("Roommate Money List");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	
@@ -80,11 +81,14 @@ public class FirstWindow extends JFrame
 		firstWindowPane.add(addNewUser);
 		
 		initializePasswordPanel();
-		
+
 		passwordPanel.add(username);
 		passwordPanel.add(userInput);
 		passwordPanel.add(password);
 		passwordPanel.add(passInput);
+
+		
+		
 		
 		userInput.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
@@ -94,7 +98,8 @@ public class FirstWindow extends JFrame
 		
 		passInput.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				setTestUser(passInput.getText());
+				if (SQLMain.verify(testUser, passInput.getText()))
+					cl.show(mainPanel, "2a");
 			}
 		});
 		
@@ -105,28 +110,42 @@ public class FirstWindow extends JFrame
 		//Adding components to the user pane
 		newUserPane.add(enterName);	
 		newUserPane.add(name);
+		newUserPane.add(newPass);
+		newUserPane.add(newPassEnterHere);
 		newUserPane.add(instructions);
 		newUserPane.add(doneEntering);
+
 		
 		initializeMainFrame();
 		
 		//Add the components to the main panel
 		mainPanel.add(firstWindowPane, "1");	 //Creating the main login window
-		mainPanel.add(passwordPanel, "1b");
 		mainPanel.add(contentPane, "2a");
 		mainPanel.add(newUserPane, "2b");	//Creating a new user
-
-		if (match)
-			cl.show(mainPanel,  "2a");
+		mainPanel.add(passwordPanel, "1b");	//Checking logins
+		
+	
 		
 		//If you select any user's name, go to the "2a" main panel
-		nameList.addActionListener(new ActionListener(){
+		name.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-					String tempX = (String) nameList.getSelectedItem();
+				String tempX = name.getText();
 					setNameSelected(tempX);
-					cl.show(mainPanel, "1b");
+					System.out.println("user is " + tempX );
 				}
 		});
+		
+		newPassEnterHere.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String tempX = newPassEnterHere.getText();
+				setPassword(tempX);
+				System.out.println(" pass is " + storePass);
+				SQLMain.registerUser(storeUser, storePass);
+				
+			}
+		});
+		
+
 		
 		addNewUser.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
@@ -137,17 +156,8 @@ public class FirstWindow extends JFrame
 		name.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				//Create characteristics of a new user here
-				System.out.println("Pressed");
 				newUserName = name.getText();
-				firstWindowPane.remove(nameList);
-				firstWindowPane.remove(addNewUser);
-				newNameArray = new String[names.length+1];
-				for (int i = 0; i < names.length; i++)
-					newNameArray[i] = names [i];
-				newNameArray[names.length] = newUserName;
-				nameList = new JComboBox (newNameArray);
-				firstWindowPane.add(nameList);
-				firstWindowPane.add(addNewUser);
+				nameList.addItem(newUserName);
 			}
 
 		}); 
@@ -155,6 +165,13 @@ public class FirstWindow extends JFrame
 		doneEntering.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				cl.show(mainPanel, "1");
+				nameList.addActionListener(new ActionListener(){
+					public void actionPerformed (ActionEvent e){
+						nameList.getSelectedItem();
+						cl.show(mainPanel, "1b");
+						userInput.setText((String) nameList.getSelectedItem());
+					}
+				});
 			}
 		});
 		
@@ -217,9 +234,9 @@ public class FirstWindow extends JFrame
     
     public void initializePasswordPanel(){
     	passwordPanel.setLayout(new GridLayout(2,2));
-		passwordPanel.setSize(1000, 1000);
+		passwordPanel.setSize(2000, 1000);
 		passwordPanel.setVisible(true);
-		
+				
 		username.setFont(new Font ("Times New Roman", Font.BOLD, 30));
 		password.setFont(new Font ("Times New Roman", Font.BOLD, 30));
 		userInput.setFont(new Font ("Times New Roman", Font.BOLD, 30));
@@ -227,9 +244,11 @@ public class FirstWindow extends JFrame
     }
     
     public void setNameSelected(String tempX){
-    	nameSelected = tempX;
-    	thisUser.setText(nameSelected);
-    	
+    	storeUser = tempX;    	
+    }
+    
+    public void setPassword(String tempX){
+    	storePass = tempX;
     }
     
 
@@ -237,7 +256,7 @@ public class FirstWindow extends JFrame
 		//Initialize the information for your First Window Pane
 		firstWindowPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		firstWindowPane.setLayout(new GridLayout(2, 1));
-		firstWindowPane.setSize(1000, 1000);
+		firstWindowPane.setSize(2000, 2000);
 		setBounds(500, 100, 1500, 1500);		//x y position, x y length		
 		firstWindowPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 				
@@ -246,21 +265,23 @@ public class FirstWindow extends JFrame
 	}
     
     public void initializeNewUser(){
+    	newUserPane.setSize(2000, 2000);
     	//New User Pane initialization
 		newUserPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		newUserPane.setLayout(new GridLayout(2, 2));
+		newUserPane.setLayout(new GridLayout(3, 2));
 		
 		//Formatting font
 		enterName.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		name.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		doneEntering.setFont(new Font("Times New Roman", Font.BOLD, 30));
-		
+		newPassEnterHere.setFont(new Font("Times New Roman", Font.BOLD, 30));
+		newPass.setFont(new Font ("Times New Roman", Font.BOLD, 30));
     }
     
     public void initializeMainFrame(){
     	//Setting conditions for the main user GUI
-    	contentPane.setBounds(500, 100, 1500, 1500);
-    	contentPane.setSize(100, 100);
+    	contentPane.setBounds(500, 100, 3000, 3000);
+    	contentPane.setSize(2000, 2000);
     	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
     	contentPane.setLayout(new GridBagLayout());
     }

@@ -201,7 +201,7 @@ public class SQLMain {
 		 String printPayer = "";
 		 String printPayee = "";
 		 String printAmount = "";
-		 int counter = 0;
+		 int counter = SQLMain.getRowNumber(name);
 		 try {
 			 PreparedStatement statement = learning.connect().prepareStatement(sql);
 			 ResultSet data = statement.executeQuery();
@@ -209,10 +209,10 @@ public class SQLMain {
 				 printPayer = data.getString("payer");
 				 printPayee = data.getString("payee");
 				 printAmount = Double.toString(data.getDouble("amount"));
-				 pastPayArr[counter][0] = printPayer;
-				 pastPayArr[counter][1] = printPayee;
-				 pastPayArr[counter][2] = printAmount;
-				 counter++;
+				 pastPayArr[counter - 1][0] = printPayer;
+				 pastPayArr[counter - 1][1] = printPayee;
+				 pastPayArr[counter - 1][2] = printAmount;
+				 counter--;
 			 }
 		 } catch(SQLException e) {
 			 e.printStackTrace();

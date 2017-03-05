@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -40,9 +41,12 @@ public class FirstWindow extends JFrame
 	private JPanel passwordPanel = new JPanel();
 	private JLabel username = new JLabel ("Username: ");
 	private JLabel password = new JLabel ("Password: ");
-	private JTextField userInput = new JTextField ();
+	private JTextField userInput = new JTextField();
 	private JTextField passInput = new JTextField();
 	private String testUser, testPass;
+	
+	//Logout button
+	private JButton logout = new JButton("Log Out");
 	
 	//Create option to create a new user
 	private JButton addNewUser = new JButton ("Add New User");
@@ -64,6 +68,8 @@ public class FirstWindow extends JFrame
 	private JComboBox<String> payeeList = new JComboBox<String>();
 	private JLabel amountText = new JLabel ("How much do you owe them?");
 	private JTextField amount = new JTextField();
+	private String chosenPayee;
+	private double amountRead;
 	
 	private JPanel balancePane = new JPanel();
 	private JButton doneBalance = new JButton ("Return");
@@ -222,7 +228,13 @@ public class FirstWindow extends JFrame
 		c.gridheight = 3;
 		c.fill = GridBagConstraints.VERTICAL;
 		contentPane.add(transactionHistory, c);
+		contentPane.add(logout);
 
+		logout.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				cl.show(mainPanel, "1");
+			}
+		});
 		
 		transactionHistory.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
@@ -261,22 +273,22 @@ public class FirstWindow extends JFrame
 				paymentPane.add(amountText);
 				paymentPane.add(amount);
 				
-				String chosenPayee = (String) payeeList.getSelectedItem();
-				
 				amount.addActionListener(new ActionListener() {
-					public void actionPerformed (ActionEvent e){
-						while(!isDouble(amount.getText())){
-						}
-						double amountRead = Double.parseDouble(amount.getText());
+					public void actionPerformed (ActionEvent acd){
+//						while(!isDouble(amount.getText())){
+//						}
+						amountRead = Double.parseDouble(amount.getText());
+						chosenPayee = ((String) payeeList.getSelectedItem());
 						SQLMain.makePayment(userInput.getText(), chosenPayee, amountRead);
 						cl.show(mainPanel, "2a");
+						amount = new JTextField();
+						amountRead = 0;
 						paymentPane = new JPanel();
 					}
 				});
 				
 				mainPanel.add(paymentPane, "pay");
 				cl.show(mainPanel, "pay");
-				payeeList = new JComboBox();
 			}
 		});
 		
@@ -325,6 +337,9 @@ public class FirstWindow extends JFrame
     }
  
     public void initializeMakePayment(){
+    	amount = new JTextField();
+    	amountRead = 0;
+    	payeeList = new JComboBox();
     	paymentPane.setLayout(new GridLayout(2, 2));
     	paymentPane.setVisible(true);
     	

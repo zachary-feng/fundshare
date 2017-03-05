@@ -46,20 +46,4 @@ public class Learning {
 	        }
 	    }
 	}
-	
-	public static void main (String[] args) {
-		Learning learning = new Learning();
-		String sql = "SELECT * FROM userinstances";
-		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
-			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
-				System.out.println("Name: " + rs.getObject("name") + "\nBalance: " + rs.getObject("balance"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			learning.disconnect();
-		}
-	}
 }

@@ -10,4 +10,5 @@ SQLMain.java
 FirstWindow.java
 - Implements Java GUI; main method located here
 
+
 <i> Contributors: Zachary Feng, Deifilia To, Julia Luo </i>

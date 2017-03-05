@@ -58,6 +58,15 @@ public class FirstWindow extends JFrame
 	private JPanel contentPane = new JPanel();
 	private JLabel thisUser = new JLabel(); 
 	
+	private JPanel paymentPane = new JPanel();
+	private JLabel payee = new JLabel ("Select who you owe money to");
+	private JComboBox<String> payeeList = new JComboBox<String>();
+	private JLabel amountText = new JLabel ("How much do you owe them?");
+	private JTextField amount = new JTextField();
+	
+	private JPanel balancePane = new JPanel();
+	private JButton doneBalance = new JButton ("Return");
+	
 	private JButton makePayment = new JButton ("Make Payment");
 	private JButton checkBalance = new JButton ("Check Balance");
 	private JLabel transactionHistory = new JLabel ("transactionHistory");
@@ -205,10 +214,33 @@ public class FirstWindow extends JFrame
 		
 		makePayment.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("Payment made");
+				initializeMakePayment();
+				for (int i = 0; i < nameList.getItemCount(); i++){
+					if (!nameList.getItemAt(i).equals(userInput.getText()))
+						payeeList.addItem(nameList.getItemAt(i)); 
+				}
+									
+				paymentPane.add(payee);
+				paymentPane.add(payeeList);
+				paymentPane.add(amountText);
+				paymentPane.add(amount);
+				
+				String chosenPayee = (String) payeeList.getSelectedItem();
+				
+				amount.addActionListener(new ActionListener() {
+					public void actionPerformed (ActionEvent e){
+						while(!isDouble(amount.getText())){
+						}
+						double amountRead = Double.parseDouble(amount.getText());
+						SQLMain.makePayment(userInput.getText(), chosenPayee, amountRead);
+						cl.show(mainPanel, "2a");
+					}
+				});
+				
+				mainPanel.add(paymentPane, "pay");
+				cl.show(mainPanel, "pay");
 			}
 		});
-		
 		
 		
 		checkBalance.addActionListener(new ActionListener(){
@@ -224,6 +256,16 @@ public class FirstWindow extends JFrame
 
     }
  
+    public void initializeMakePayment(){
+    	paymentPane.setLayout(new GridLayout(2, 2));
+    	paymentPane.setVisible(true);
+    	
+    	payee.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	payeeList.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	amountText.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	amount.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    }
+    
     public void setTestUser (String user){
     	testUser = user;
     }
@@ -290,12 +332,18 @@ public class FirstWindow extends JFrame
     	checkBalance.setFont(new Font("Times New Roman", Font.BOLD, 30));
     }
     
-    public void initializeMakePayment(){
-    	makePayment.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    }
-    
     public void initializeTransactionLabel(){
     	transactionHistory.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    }
+    
+    private static boolean isDouble(String s){
+    	try{
+    		Double.parseDouble(s);
+    		return true;
+    	}
+    	catch (Exception e){
+    		return false;
+    	}
     }
     
     public static void main(String[] args)

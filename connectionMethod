@@ -1,0 +1,160 @@
+package spreadsheet;
+
+import java.sql.*;
+
+public class SQLMain {
+	
+	public static void createTransTab (String name) throws SQLException {
+		Learning learning = new Learning();
+		String sql = "CREATE TABLE IF NOT EXISTS " + name + "transactionhistory" + "(payer varchar(32), payee varchar(32), amount double(5,2))";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static void registerUser (String name, String pass) {
+		Learning learning = new Learning();
+		String sql = "INSERT INTO registration(username, password)VALUES(?,?)";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setString(1, name);
+			statement.setString(2, pass);
+			statement.executeUpdate();
+			SQLMain.createTransTab(name);
+			SQLMain.initUser(name, 0);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static void initUser (String name, double balance) {
+		Learning learning = new Learning();
+		String sql = "INSERT INTO userinstances(name, balance)VALUES(?,?)";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setString(1, name);
+			statement.setDouble(2, balance);
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static void deinitUser (String name) {
+		Learning learning = new Learning();
+		String sql = "DELETE FROM userinstances WHERE name = ?";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setString(1, name);
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static void displayTable () {
+		Learning learning = new Learning();
+		String sql = "SELECT * FROM userinstances";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			ResultSet data = statement.executeQuery();
+			while(data.next()) {
+				System.out.println("Name: " + data.getObject("name") + "\nBalance: " + data.getObject("balance"));
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static double getBalance (String name) {
+		Learning learning = new Learning();
+		String sql = "SELECT balance FROM userinstances WHERE name = ?";
+		double balance = 0;
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setString(1, name);
+			ResultSet data = statement.executeQuery();
+			while(data.next()) {
+				balance = data.getDouble("balance"); 
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+		return balance;
+	}
+	
+	public static void payUser (String payee, double amount) {
+		Learning learning = new Learning();
+		String sql = "UPDATE userinstances SET balance = balance + ? WHERE name = ?";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setDouble(1, amount);
+			statement.setString(2, payee);
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static void deductUser (String payer, double amount) {
+		Learning learning = new Learning();
+		String sql = "UPDATE userinstances SET balance = balance - ? WHERE name = ?";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setDouble(1, amount);
+			statement.setString(2, payer);
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+	
+	public static void makePayment (String payer, String payee, double amount) {
+		Learning learning = new Learning();
+		SQLMain.payUser(payee, amount);
+		SQLMain.deductUser(payer, amount);
+		String sql = "INSERT INTO " + payer + "transactionhistory(payer, payee, amount) VALUES(?,?,?)";
+		String sql1 = "INSERT INTO " + payee + "transactionhistory(payer, payee, amount) VALUES(?,?,?)";
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			statement.setString(1, payer);
+			statement.setString(2, payee);
+			statement.setDouble(3, amount);
+			statement.executeUpdate();
+			PreparedStatement statement1 = learning.connect().prepareStatement(sql1);
+			statement1.setString(1, payer);
+			statement1.setString(2, payee);
+			statement1.setDouble(3, amount);
+			statement1.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+	}
+
+	public static void main (String[] args) {
+		SQLMain.registerUser("noice", "hi");
+		SQLMain.registerUser("yee", "hi");
+		SQLMain.makePayment("noice", "yee", 20);
+	}
+}

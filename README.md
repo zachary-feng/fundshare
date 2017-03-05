@@ -1,4 +1,3 @@
-# spreadsheet
 # FriendshipFunFunds
 
 A java applet for sharing funds among friends.
@@ -11,3 +10,5 @@ SQLMain.java
 
 FirstWindow.java
 - Implements Java GUI; main method located here
+
+# spreadsheet

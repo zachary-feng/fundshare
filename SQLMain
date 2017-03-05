@@ -1,4 +1,4 @@
-package edu.utexas.se.swing.sample;
+package FriendshipFunFunds;
 
 import java.text.DecimalFormat;
 

@@ -90,7 +90,7 @@ public class FirstWindow extends JFrame
     public FirstWindow()
     {	
  
-        super("Roommate Money List");
+        super("FriendshipFunFunds");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         makePayment.setFont(new Font("Book Antiqua", Font.BOLD, 30));
         addNewUser.setFont(new Font("Book Antiqua", Font.BOLD, 30));

@@ -94,6 +94,7 @@ public class FirstWindow extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         makePayment.setFont(new Font("Book Antiqua", Font.BOLD, 30));
         addNewUser.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+        addNewUser.setForeground(new Color(50,200,150));
         
         //make sure mainPanel has the card layout
         mainPanel.setLayout(cl);
@@ -109,7 +110,7 @@ public class FirstWindow extends JFrame
 		
 		initializePasswordPanel();
 
-		passwordPanel.add(username);
+		passwordPanel.add(username); 		// Adding components to check password panel
 		passwordPanel.add(userInput);
 		passwordPanel.add(password);
 		passwordPanel.add(passInput);
@@ -119,13 +120,13 @@ public class FirstWindow extends JFrame
 		
 		
 		
-		userInput.addActionListener(new ActionListener(){
+		userInput.addActionListener(new ActionListener(){	//username that is input -- JTextField
 			public void actionPerformed (ActionEvent e){
 				setTestUser(userInput.getText());
 			}
 		});
 		
-		passInput.addActionListener(new ActionListener(){
+		passInput.addActionListener(new ActionListener(){	//password verify if same as in database
 			public void actionPerformed (ActionEvent e){
 				if (SQLMain.verify(testUser, passInput.getText())){
 					warning.setVisible(false);
@@ -144,7 +145,7 @@ public class FirstWindow extends JFrame
 		
 
 			
-		initializeNewUser();
+		initializeNewUser(); //initialize new user pane, to register new user
 		
 		//Adding components to the user pane
 		newUserPane.add(enterName);	
@@ -155,7 +156,7 @@ public class FirstWindow extends JFrame
 		newUserPane.add(doneEntering);
 
 		
-		initializeMainFrame();
+		initializeMainFrame(); //login pane
 		
 		//Add the components to the main panel
 		mainPanel.add(firstWindowPane, "1");	 //Creating the main login window
@@ -173,6 +174,7 @@ public class FirstWindow extends JFrame
 				}
 		});
 		
+		//register user action listener
 		newPassEnterHere.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String tempX = newPassEnterHere.getText();
@@ -183,13 +185,14 @@ public class FirstWindow extends JFrame
 		});
 		
 
-		
+		//register user action listener
 		addNewUser.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				cl.show(mainPanel, "2b");
 			}
 		});
 	
+		//register user action listener
 		name.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				//Create characteristics of a new user here
@@ -199,6 +202,7 @@ public class FirstWindow extends JFrame
 
 		}); 
 		
+		//login user action listener
 		doneEntering.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				cl.show(mainPanel, "1");
@@ -228,6 +232,7 @@ public class FirstWindow extends JFrame
 		thisUser.setText((String)(userInput.getText()));
 		thisUser.setFont(new Font("Book Antiqua", Font.BOLD, 30));
 		
+		//main login pane
 		contentPane.add(thisUser, c);
 		c.gridy = 1;
 		contentPane.add(logout, c);
@@ -241,6 +246,7 @@ public class FirstWindow extends JFrame
 		c.gridheight = 5;
 		c.fill = GridBagConstraints.VERTICAL;
 
+		//logout button action listener
 		logout.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				cl.show(mainPanel, "1");
@@ -248,6 +254,7 @@ public class FirstWindow extends JFrame
 			}
 		});
 		
+		//transaction history action listener
 		transactionHistory.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				
@@ -276,6 +283,7 @@ public class FirstWindow extends JFrame
 			}
 		});
 		
+		//make payment button action listner, payment pane
 		makePayment.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				initializeMakePayment();
@@ -285,10 +293,9 @@ public class FirstWindow extends JFrame
 				paymentPane.add(amountText);
 				paymentPane.add(amount);
 				
+				//amount action listner, nothing happens if nondouble number is inputted
 				amount.addActionListener(new ActionListener() {
 					public void actionPerformed (ActionEvent acd){
-//						while(!isDouble(amount.getText())){
-//						}
 						amountRead = Double.parseDouble(amount.getText());
 						chosenPayee = ((String) payeeList.getSelectedItem());
 						SQLMain.makePayment(userInput.getText(), chosenPayee, amountRead);
@@ -304,7 +311,7 @@ public class FirstWindow extends JFrame
 			}
 		});
 		
-		
+		//check balance action listener
 		checkBalance.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				DecimalFormat df = new DecimalFormat("###.00");
@@ -340,6 +347,7 @@ public class FirstWindow extends JFrame
 
     }
     
+    //initializers
     public void initializeTransactionHistory(){
     	transactionHistoryPane.setLayout(new GridLayout(5, 3));
     	transactionHistoryPane.setSize(1000,1000);
@@ -374,7 +382,7 @@ public class FirstWindow extends JFrame
     	doneBalance.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     	
     }
-    
+    //storing names
     public void setTestUser (String user){
     	testUser = user;
     }
@@ -445,6 +453,7 @@ public class FirstWindow extends JFrame
     	transactionHistory.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     }
     
+    //test if string is a double
     private static boolean isDouble(String s){
     	try{
     		Double.parseDouble(s);

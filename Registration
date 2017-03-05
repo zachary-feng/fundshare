@@ -1,0 +1,82 @@
+package spreadsheet;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.Statement;
+
+public class MySql {
+	
+	public static void connection() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+//	balance must be less than 1000
+	public static void writeToMySql(String name, double balance) { 
+		connection();
+		String host = "jdbc:mysql://localhost/user";
+		String username = "root";
+		String password = "";
+		try {
+			Connection connect = DriverManager.getConnection(host, username, password);
+			PreparedStatement statement = (PreparedStatement) connect.prepareStatement("INSERT INTO userinstances(name, balance)VALUES(?,?)");
+			statement.setString(1, name);
+			statement.setDouble(2, balance);
+			statement.executeUpdate();
+			statement.close();
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void deleteFromMySql(String name, double balance) {
+		connection();
+		String host = "jdbc:mysql://localhost/user";
+		String username = "root";
+		String password = "";
+		try {
+			Connection connect = DriverManager.getConnection(host, username, password);
+			PreparedStatement statement = (PreparedStatement) connect.prepareStatement("DELETE FROM userinstances WHERE name = ? AND balance = ?");
+			statement.setString(1, name);
+			statement.setDouble(2, balance);
+			statement.executeUpdate();
+			statement.close();
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void displayTable() {
+		connection();
+		String host = "jdbc:mysql://localhost/user";
+		String username = "root";
+		String password = "";
+		try {
+			Connection connect = DriverManager.getConnection(host, username, password);
+			PreparedStatement statement = (PreparedStatement) connect.prepareStatement("SELECT * FROM userinstances");
+			ResultSet data = statement.executeQuery();
+			while(data.next()) {
+				System.out.println("Name: " + data.getObject("name") + "\nBalance: " + data.getObject("balance"));
+			}
+			statement.close();
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main (String[] args) {
+		MySql.writeToMySql("deif", 900);
+	}
+}

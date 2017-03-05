@@ -1,5 +1,7 @@
 package edu.utexas.se.swing.sample;
 
+import java.text.DecimalFormat;
+
 import java.sql.*;
 
 import javax.swing.JComboBox;
@@ -230,7 +232,8 @@ public class SQLMain {
 			 while(data.next()) {
 				 printPayer = data.getString("payer");
 				 printPayee = data.getString("payee");
-				 printAmount = Double.toString(data.getDouble("amount"));
+				 DecimalFormat df = new DecimalFormat("###.00");
+				 printAmount = (String)(df.format(data.getDouble("amount")));
 				 pastPayArr[counter - 1][0] = printPayer;
 				 pastPayArr[counter - 1][1] = printPayee;
 				 pastPayArr[counter - 1][2] = printAmount;

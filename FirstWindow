@@ -360,7 +360,7 @@ public class FirstWindow extends JFrame
 				payeeList.addItem(nameList.getItemAt(i)); 
     	}
     	payee.setFont(new Font("Book Antiqua", Font.BOLD, 30));
-    	payeeList.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	payeeList.setFont(new Font("Book Antiqua", Font.BOLD, 20));
     	amountText.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     	amount.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     }

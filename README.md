@@ -1,4 +1,5 @@
-# FriendshipFunFunds # spreadsheet
+# spreadsheet || FriendshipFunFunds
+Contributors: Zachary Feng, Deifilia To, Julia Luo
 
 A java applet for sharing funds among friends.
 

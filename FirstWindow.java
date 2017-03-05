@@ -9,19 +9,16 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 
-import java.util.*;
 
 public class FirstWindow extends JFrame  
 {
@@ -36,7 +33,7 @@ public class FirstWindow extends JFrame
 	private String storeUser, storePass;
 	private JLabel newPass = new JLabel("Select a new password!");
 	private JTextField newPassEnterHere = new JTextField ();
-	private JComboBox<String> nameList = new JComboBox<String>();
+	private JComboBox<String> nameList = SQLMain.listUsers();
 	//In Main Menu: Username and Password
 	private JPanel passwordPanel = new JPanel();
 	private JLabel username = new JLabel ("Username: ");
@@ -214,25 +211,26 @@ public class FirstWindow extends JFrame
 		c.gridx = 0;
 		c.gridy = 0;
 		
-		thisUser.setText((String) nameList.getSelectedItem());
-		thisUser.setFont(new Font ("Times New Roman", Font.BOLD, 30));
-
-
-		contentPane.add(thisUser, c);
+		thisUser.setText((String)(userInput.getText()));
+		thisUser.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		
+		contentPane.add(thisUser, c);
 		c.gridy = 1;
-		contentPane.add(makePayment, c);
+		contentPane.add(logout, c);
 		c.gridy = 2;
-		contentPane.add(checkBalance, c);
+		contentPane.add(makePayment, c);
 		c.gridy = 3;
-		c.gridheight = 3;
-		c.fill = GridBagConstraints.VERTICAL;
+		contentPane.add(checkBalance, c);
+		c.gridy = 4;
 		contentPane.add(transactionHistory, c);
-		contentPane.add(logout);
+		c.gridy = 5;
+		c.gridheight = 5;
+		c.fill = GridBagConstraints.VERTICAL;
 
 		logout.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				cl.show(mainPanel, "1");
+				passInput.setText("");
 			}
 		});
 		

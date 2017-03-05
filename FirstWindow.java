@@ -1,4 +1,5 @@
 package edu.utexas.se.swing.sample;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -16,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
 
 import java.util.*;
 
@@ -39,13 +42,11 @@ public class FirstWindow extends JFrame
 	private JLabel password = new JLabel ("Password: ");
 	private JTextField userInput = new JTextField ();
 	private JTextField passInput = new JTextField();
-	private String testUser;
-	private String testPass;
+	private String testUser, testPass;
 	
 	//Create option to create a new user
 	private JButton addNewUser = new JButton ("Add New User");
 	private String newUserName;
-	private String[] newNameArray; 
 
 	//Set up option for when you are creating a new user
 	private JPanel newUserPane = new JPanel();
@@ -69,16 +70,24 @@ public class FirstWindow extends JFrame
 	private JLabel balanceText = new JLabel ("Your balance in dollars is: ");
 	private JLabel balance = new JLabel();
 	
-	private JButton makePayment = new JButton ("Make Payment");
+	private JPanel transactionHistoryPane = new JPanel();
+	private JButton doneHistory = new JButton ("Return");
+	private String[] columns = new String[]{"payer", "payee", "amount"};
+	private String[][] data;
+	private JTable table;
+	
+	private JButton makePayment = new JButton ("Make Payment");	
 	private JButton checkBalance = new JButton ("Check Balance");
-	private JLabel transactionHistory = new JLabel ("transactionHistory");
+	private JButton transactionHistory = new JButton ("Transaction History");
 	 
     public FirstWindow()
-    {
+    {	
  
         super("Roommate Money List");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	
+        makePayment.setFont(new Font("Times New Roman", Font.BOLD, 30));
+        addNewUser.setFont(new Font("Times New Roman", Font.BOLD, 30));
+        
         //make sure mainPanel has the card layout
         mainPanel.setLayout(cl);
         
@@ -213,14 +222,39 @@ public class FirstWindow extends JFrame
 		c.gridheight = 3;
 		c.fill = GridBagConstraints.VERTICAL;
 		contentPane.add(transactionHistory, c);
+
+		
+		transactionHistory.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				
+				data = SQLMain.pastPayment(userInput.getText());
+				table = new JTable(data, columns);
+				table.setRowHeight(50);
+				
+				initializeTransactionHistory();
+				table.getTableHeader().setFont(new Font("Times New Roman", Font.BOLD, 30));
+				
+				transactionHistoryPane.setLayout(new BorderLayout());
+				transactionHistoryPane.add(table.getTableHeader(), BorderLayout.NORTH);
+				transactionHistoryPane.add(table, BorderLayout.CENTER);
+				transactionHistoryPane.add(doneHistory, BorderLayout.SOUTH);
+
+				doneHistory.addActionListener(new ActionListener(){
+					public void actionPerformed (ActionEvent e){
+						cl.show(mainPanel, "2a");
+						transactionHistoryPane = new JPanel();
+					}
+				});
+			
+				mainPanel.add(transactionHistoryPane, "hist");
+				cl.show(mainPanel, "hist");
+				table = new JTable();
+			}
+		});
 		
 		makePayment.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				initializeMakePayment();
-				for (int i = 0; i < nameList.getItemCount(); i++){
-					if (!nameList.getItemAt(i).equals(userInput.getText()))
-						payeeList.addItem(nameList.getItemAt(i)); 
-				}
 									
 				paymentPane.add(payee);
 				paymentPane.add(payeeList);
@@ -236,11 +270,13 @@ public class FirstWindow extends JFrame
 						double amountRead = Double.parseDouble(amount.getText());
 						SQLMain.makePayment(userInput.getText(), chosenPayee, amountRead);
 						cl.show(mainPanel, "2a");
+						paymentPane = new JPanel();
 					}
 				});
 				
 				mainPanel.add(paymentPane, "pay");
 				cl.show(mainPanel, "pay");
+				payeeList = new JComboBox();
 			}
 		});
 		
@@ -252,12 +288,22 @@ public class FirstWindow extends JFrame
 				balancePane.add(balanceText);
 				balancePane.add(balance);
 				balancePane.add(doneBalance);
+				doneBalance.addActionListener(new ActionListener(){
+					public void actionPerformed (ActionEvent e){
+						cl.show(mainPanel, "2a");
+						balancePane = new JPanel();
+					}
+				});
 				amount.addActionListener(new ActionListener() {
 					public void actionPerformed (ActionEvent e){
 						cl.show(mainPanel, "2a");
+						balancePane = new JPanel();
+						balance = new JLabel();
 					}});
 				mainPanel.add(balancePane, "bal");
 				cl.show(mainPanel, "bal");
+				balancePane = new JPanel();
+				balance = new JLabel();
 			}
 		});
 
@@ -268,11 +314,24 @@ public class FirstWindow extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
+    
+    public void initializeTransactionHistory(){
+    	transactionHistoryPane.setLayout(new GridLayout(2, 5));
+    	transactionHistoryPane.setSize(1000,1000);
+    	
+    	transactionHistoryPane.setVisible(true);
+    	doneHistory.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	table.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    }
  
     public void initializeMakePayment(){
     	paymentPane.setLayout(new GridLayout(2, 2));
     	paymentPane.setVisible(true);
     	
+    	for (int i = 0; i < nameList.getItemCount(); i++){
+			if (!nameList.getItemAt(i).equals(userInput.getText()))
+				payeeList.addItem(nameList.getItemAt(i)); 
+    	}
     	payee.setFont(new Font("Times New Roman", Font.BOLD, 30));
     	payeeList.setFont(new Font("Times New Roman", Font.BOLD, 30));
     	amountText.setFont(new Font("Times New Roman", Font.BOLD, 30));
@@ -298,7 +357,7 @@ public class FirstWindow extends JFrame
     }
     
     public void initializePasswordPanel(){
-    	passwordPanel.setLayout(new GridLayout(2,2));
+    	passwordPanel.setLayout(new GridLayout(2,3));
 		passwordPanel.setSize(2000, 1000);
 		passwordPanel.setVisible(true);
 				

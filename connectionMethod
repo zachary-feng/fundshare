@@ -1,6 +1,8 @@
-package spreadsheet;
+package edu.utexas.se.swing.sample;
 
 import java.sql.*;
+
+import com.mysql.jdbc.PreparedStatement;
 
 public class SQLMain {
 	
@@ -8,7 +10,7 @@ public class SQLMain {
 		Learning learning = new Learning();
 		String sql = "CREATE TABLE IF NOT EXISTS " + name + "transactionhistory" + "(payer varchar(32), payee varchar(32), amount double(5,2))";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.executeUpdate();
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -21,7 +23,7 @@ public class SQLMain {
 		Learning learning = new Learning();
 		String sql = "INSERT INTO registration(username, password)VALUES(?,?)";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setString(1, name);
 			statement.setString(2, pass);
 			statement.executeUpdate();
@@ -38,7 +40,7 @@ public class SQLMain {
 		Learning learning = new Learning();
 		String sql = "INSERT INTO userinstances(name, balance)VALUES(?,?)";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setString(1, name);
 			statement.setDouble(2, balance);
 			statement.executeUpdate();
@@ -53,7 +55,7 @@ public class SQLMain {
 		Learning learning = new Learning();
 		String sql = "DELETE FROM userinstances WHERE name = ?";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setString(1, name);
 			statement.executeUpdate();
 		} catch(SQLException e) {
@@ -63,11 +65,33 @@ public class SQLMain {
 		}
 	}
 	
+	public static boolean verify(String name, String pass) { 
+		Learning learning = new Learning();
+		String sql = "SELECT password FROM registration WHERE username = ?";
+		String realPass = "";
+		try {
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
+			statement.setString(1, name);
+			ResultSet data = statement.executeQuery();
+			while(data.next()) {
+				realPass = data.getString("password");
+			}
+			if (realPass.equals(pass)){
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+		return false;
+	}
+	
 	public static void displayTable () {
 		Learning learning = new Learning();
 		String sql = "SELECT * FROM userinstances";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			ResultSet data = statement.executeQuery();
 			while(data.next()) {
 				System.out.println("Name: " + data.getObject("name") + "\nBalance: " + data.getObject("balance"));
@@ -84,7 +108,7 @@ public class SQLMain {
 		String sql = "SELECT balance FROM userinstances WHERE name = ?";
 		double balance = 0;
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setString(1, name);
 			ResultSet data = statement.executeQuery();
 			while(data.next()) {
@@ -102,7 +126,7 @@ public class SQLMain {
 		Learning learning = new Learning();
 		String sql = "UPDATE userinstances SET balance = balance + ? WHERE name = ?";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setDouble(1, amount);
 			statement.setString(2, payee);
 			statement.executeUpdate();
@@ -117,7 +141,7 @@ public class SQLMain {
 		Learning learning = new Learning();
 		String sql = "UPDATE userinstances SET balance = balance - ? WHERE name = ?";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setDouble(1, amount);
 			statement.setString(2, payer);
 			statement.executeUpdate();
@@ -135,12 +159,12 @@ public class SQLMain {
 		String sql = "INSERT INTO " + payer + "transactionhistory(payer, payee, amount) VALUES(?,?,?)";
 		String sql1 = "INSERT INTO " + payee + "transactionhistory(payer, payee, amount) VALUES(?,?,?)";
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			statement.setString(1, payer);
 			statement.setString(2, payee);
 			statement.setDouble(3, amount);
 			statement.executeUpdate();
-			PreparedStatement statement1 = learning.connect().prepareStatement(sql1);
+			PreparedStatement statement1 = (PreparedStatement) learning.connect().prepareStatement(sql1);
 			statement1.setString(1, payer);
 			statement1.setString(2, payee);
 			statement1.setDouble(3, amount);

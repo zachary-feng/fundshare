@@ -2,6 +2,8 @@ package edu.utexas.se.swing.sample;
 
 import java.sql.*;
 
+import javax.swing.JComboBox;
+
 import com.mysql.jdbc.PreparedStatement;
 
 public class SQLMain {
@@ -63,6 +65,26 @@ public class SQLMain {
 		} finally {
 			learning.disconnect();
 		}
+	}
+	
+	public static JComboBox<String> listUsers() {
+		Learning learning = new Learning();
+		String sql = "SELECT name FROM userinstances";
+		String name = "";
+		JComboBox<String> nameList = new JComboBox<String>();
+		try {
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
+			ResultSet data = statement.executeQuery();
+			while(data.next()) {
+				name = data.getString("name");
+				nameList.addItem(name);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+		return nameList;
 	}
 	
 	public static boolean verify(String name, String pass) { 

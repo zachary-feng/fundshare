@@ -20,6 +20,24 @@ public class MySql {
 		}
 	}
 	
+	public static void register(String name, String pass) { 
+		connection();
+		String host = "jdbc:mysql://localhost/user";
+		String username = "root";
+		String password = "";
+		try {
+			Connection connect = DriverManager.getConnection(host, username, password);
+			PreparedStatement statement = (PreparedStatement) connect.prepareStatement("INSERT INTO registration(username, password)VALUES(?,?)");
+			statement.setString(1, name);
+			statement.setString(2, pass);
+			statement.executeUpdate();
+			statement.close();
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 //	balance must be less than 1000
 	public static void writeToMySql(String name, double balance) { 
 		connection();
@@ -77,6 +95,6 @@ public class MySql {
 	}
 	
 	public static void main (String[] args) {
-		MySql.writeToMySql("deif", 900);
+		MySql.register("marley", "hullo");
 	}
 }

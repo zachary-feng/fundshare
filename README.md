@@ -1,7 +1,8 @@
 # Spreadsheet || FriendshipFunFunds
+A java applet for sharing funds among friends.
+
 <i> Contributors: Zachary Feng, Deifilia To, Julia Luo </i>
 
-A java applet for sharing funds among friends.
 
 Learning.java
 - Class to establish database connection

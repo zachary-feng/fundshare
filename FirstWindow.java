@@ -30,11 +30,19 @@ public class FirstWindow extends JFrame
 	private String[] names = {"Select User", "Julia", "Zach", "Deif"};
 	private JComboBox nameList = new JComboBox (names);
 	
+	//In Main Menu: Username and Password
+	private JPanel passwordPanel = new JPanel();
+	private JLabel username = new JLabel ("Username: ");
+	private JLabel password = new JLabel ("Password: ");
+	private JTextField userInput = new JTextField ();
+	private JTextField passInput = new JTextField();
+	private String testUser;
+	private String testPass;
+	private boolean match = false;
 	
 	//Create option to create a new user
 	private JButton addNewUser = new JButton ("Add New User");
 	private String nameSelected = names[0];
-	private int counter = 0;
 	private String newUserName;
 	private String[] newNameArray; 
 
@@ -47,7 +55,6 @@ public class FirstWindow extends JFrame
 
 	 //Create JPanel for the UserGUI main panel
 	private JPanel contentPane = new JPanel();
-	private String user;
 	private JLabel thisUser = new JLabel(); 
 	
 	private JButton makePayment = new JButton ("Make Payment");
@@ -72,6 +79,27 @@ public class FirstWindow extends JFrame
 		firstWindowPane.add(nameList);
 		firstWindowPane.add(addNewUser);
 		
+		initializePasswordPanel();
+		
+		passwordPanel.add(username);
+		passwordPanel.add(userInput);
+		passwordPanel.add(password);
+		passwordPanel.add(passInput);
+		
+		userInput.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				setTestUser(userInput.getText());
+			}
+		});
+		
+		passInput.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				setTestUser(passInput.getText());
+			}
+		});
+		
+
+			
 		initializeNewUser();
 		
 		//Adding components to the user pane
@@ -84,17 +112,22 @@ public class FirstWindow extends JFrame
 		
 		//Add the components to the main panel
 		mainPanel.add(firstWindowPane, "1");	 //Creating the main login window
+		mainPanel.add(passwordPanel, "1b");
 		mainPanel.add(contentPane, "2a");
 		mainPanel.add(newUserPane, "2b");	//Creating a new user
 
+		if (match)
+			cl.show(mainPanel,  "2a");
+		
 		//If you select any user's name, go to the "2a" main panel
 		nameList.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 					String tempX = (String) nameList.getSelectedItem();
 					setNameSelected(tempX);
-					cl.show(mainPanel, "2a");
+					cl.show(mainPanel, "1b");
 				}
 		});
+		
 		addNewUser.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				cl.show(mainPanel, "2b");
@@ -133,13 +166,14 @@ public class FirstWindow extends JFrame
 		//GridBagLayout for Main Panel
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.VERTICAL;
+
 		c.gridx = 0;
 		c.gridy = 0;
 		
 		thisUser.setText((String) nameList.getSelectedItem());
 		thisUser.setFont(new Font ("Times New Roman", Font.BOLD, 30));
-		thisUser.revalidate();
-		thisUser.repaint();
+
 
 		contentPane.add(thisUser, c);
 		
@@ -148,6 +182,8 @@ public class FirstWindow extends JFrame
 		c.gridy = 2;
 		contentPane.add(checkBalance, c);
 		c.gridy = 3;
+		c.gridheight = 3;
+		c.fill = GridBagConstraints.VERTICAL;
 		contentPane.add(transactionHistory, c);
 		
 		makePayment.addActionListener(new ActionListener(){
@@ -170,11 +206,30 @@ public class FirstWindow extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
-
+ 
+    public void setTestUser (String user){
+    	testUser = user;
+    }
+    
+    public void setTestPass (String pass){
+    	testPass = pass;
+    }
+    
+    public void initializePasswordPanel(){
+    	passwordPanel.setLayout(new GridLayout(2,2));
+		passwordPanel.setSize(1000, 1000);
+		passwordPanel.setVisible(true);
+		
+		username.setFont(new Font ("Times New Roman", Font.BOLD, 30));
+		password.setFont(new Font ("Times New Roman", Font.BOLD, 30));
+		userInput.setFont(new Font ("Times New Roman", Font.BOLD, 30));
+		passInput.setFont(new Font ("Times New Roman", Font.BOLD, 30));
+    }
+    
     public void setNameSelected(String tempX){
     	nameSelected = tempX;
     	thisUser.setText(nameSelected);
-    	thisUser.repaint();
+    	
     }
     
 
@@ -191,7 +246,7 @@ public class FirstWindow extends JFrame
 	}
     
     public void initializeNewUser(){
-    	//New User Pane initalization
+    	//New User Pane initialization
 		newUserPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		newUserPane.setLayout(new GridLayout(2, 2));
 		

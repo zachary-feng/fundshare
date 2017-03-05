@@ -32,9 +32,29 @@ public class MySql {
 			statement.setString(2, pass);
 			statement.executeUpdate();
 			statement.close();
+			MySql.createTransTable(name);
 			connect.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void createTransTable(String name) throws SQLException{
+		connection();
+		String host = "jdbc:mysql://localhost/user";
+		String username = "root";
+		String password = "";
+		Connection connect = DriverManager.getConnection(host, username, password);
+		String tableName = "CREATE TABLE IF NOT EXISTS " +name + "transactionhistory " + "( payer varchar(32), payee varchar(32), amount DOUBLE(5,2))";
+		Statement stmt = (Statement) connect.createStatement();
+		try{
+			stmt.executeUpdate(tableName);
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
+		finally{
+			stmt.close();
 		}
 	}
 	

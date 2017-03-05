@@ -1,7 +1,6 @@
 package FriendshipFunFunds;
 
 import java.text.DecimalFormat;
-
 import java.sql.*;
 
 import javax.swing.JComboBox;
@@ -205,7 +204,7 @@ public class SQLMain {
 		String sql = "SELECT count(*) FROM " + name + "transactionhistory";
 		int numberRow = 0;
 		try {
-			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			PreparedStatement statement = (PreparedStatement) learning.connect().prepareStatement(sql);
 			ResultSet data = statement.executeQuery();
 			while(data.next()) {
 				numberRow = data.getInt("count(*)");

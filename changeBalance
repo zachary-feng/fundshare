@@ -77,12 +77,26 @@ public class MySqlRetrieve {
 		}
 	}
 	
-	public static String[] makePayment(String payer, String payee, double amount) {
+	public static void makePayment(String payer, String payee, double amount) {
 		MySqlRetrieve.payUser(payee, amount);
 		MySqlRetrieve.deductBalance(payer, amount);
-		
-		String[] payHistory = {payer, payee, Double.toString(amount)};
-		return payHistory;
+		try {
+			Connection connect = DriverManager.getConnection(host, username, password);
+			PreparedStatement statement = (PreparedStatement) connect.prepareStatement("INSERT INTO " +payer +"transactionhistory(payer, payee, amount)VALUES(?,?,?)");
+			statement.setString(1, payer);
+			statement.setString(2, payee);
+			statement.setDouble(3, amount);
+			statement.executeUpdate();
+			statement.close();
+			PreparedStatement xyz = (PreparedStatement) connect.prepareStatement("INSERT INTO " +payee +"transactionhistory(payer, payee, amount)VALUES(?,?,?)");
+			xyz.setString(1, payer);
+			xyz.setString(2, payee);
+			xyz.setDouble(3, amount);
+			xyz.executeUpdate();
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main (String[] args) {

@@ -175,10 +175,60 @@ public class SQLMain {
 			learning.disconnect();
 		}
 	}
+	
+	public static int getRowNumber(String name) {
+		Learning learning = new Learning();
+		String sql = "SELECT count(*) FROM " + name + "transactionhistory";
+		int numberRow = 0;
+		try {
+			PreparedStatement statement = learning.connect().prepareStatement(sql);
+			ResultSet data = statement.executeQuery();
+			while(data.next()) {
+				numberRow = data.getInt("count(*)");
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			learning.disconnect();
+		}
+		return numberRow;
+	}
+	
+	public static String[][] pastPayment (String name) {
+		 Learning learning = new Learning();
+		 String[][] pastPayArr = new String[SQLMain.getRowNumber(name)][3];
+		 String sql = "SELECT * FROM " + name + "transactionhistory";
+		 String printPayer = "";
+		 String printPayee = "";
+		 String printAmount = "";
+		 int counter = 0;
+		 try {
+			 PreparedStatement statement = learning.connect().prepareStatement(sql);
+			 ResultSet data = statement.executeQuery();
+			 while(data.next()) {
+				 printPayer = data.getString("payer");
+				 printPayee = data.getString("payee");
+				 printAmount = Double.toString(data.getDouble("amount"));
+				 pastPayArr[counter][0] = printPayer;
+				 pastPayArr[counter][1] = printPayee;
+				 pastPayArr[counter][2] = printAmount;
+				 counter++;
+			 }
+		 } catch(SQLException e) {
+			 e.printStackTrace();
+		 } finally {
+			 learning.disconnect();
+		 }
+		 return pastPayArr;
+	}
 
 	public static void main (String[] args) {
-		SQLMain.registerUser("noice", "hi");
-		SQLMain.registerUser("yee", "hi");
-		SQLMain.makePayment("noice", "yee", 20);
+		String[][] testArr = SQLMain.pastPayment("noice");
+		for(int i = 0; i < SQLMain.getRowNumber("noice"); i++) {
+			for(int j = 0; j < 3; j++) {
+				System.out.print(testArr[i][j] + "    ");
+			}
+			System.out.println();
+		}
 	}
 }

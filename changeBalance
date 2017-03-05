@@ -77,17 +77,19 @@ public class MySqlRetrieve {
 		}
 	}
 	
-	public static void makePayment(String payer, String payee, double amount) {
+	public static String[] makePayment(String payer, String payee, double amount) {
 		MySqlRetrieve.payUser(payee, amount);
 		MySqlRetrieve.deductBalance(payer, amount);
+		
+		String[] payHistory = {payer, payee, Double.toString(amount)};
+		return payHistory;
 	}
 	
 	public static void main (String[] args) {
-//		System.out.println("Hoolia: " + MySqlRetrieve.getBalance("hoolia"));
-		System.out.println(MySqlRetrieve.getBalance("lazer"));
-		System.out.println(MySqlRetrieve.getBalance("deif"));
-		MySqlRetrieve.makePayment("lazer", "deif", 20);
-		System.out.println(MySqlRetrieve.getBalance("lazer"));
-		System.out.println(MySqlRetrieve.getBalance("deif"));
+//		System.out.println(MySqlRetrieve.getBalance("lazer"));
+//		System.out.println(MySqlRetrieve.getBalance("deif"));
+//		MySqlRetrieve.makePayment("lazer", "deif", 20);
+//		System.out.println(MySqlRetrieve.getBalance("lazer"));
+//		System.out.println(MySqlRetrieve.getBalance("deif"));
 	}
 }

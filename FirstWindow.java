@@ -66,6 +66,8 @@ public class FirstWindow extends JFrame
 	
 	private JPanel balancePane = new JPanel();
 	private JButton doneBalance = new JButton ("Return");
+	private JLabel balanceText = new JLabel ("Your balance in dollars is: ");
+	private JLabel balance = new JLabel();
 	
 	private JButton makePayment = new JButton ("Make Payment");
 	private JButton checkBalance = new JButton ("Check Balance");
@@ -245,10 +247,21 @@ public class FirstWindow extends JFrame
 		
 		checkBalance.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("Balance Checked");
+				balance.setText(Double.toString(SQLMain.getBalance(userInput.getText())));
+				initializeBalanceCheck();
+				balancePane.add(balanceText);
+				balancePane.add(balance);
+				balancePane.add(doneBalance);
+				amount.addActionListener(new ActionListener() {
+					public void actionPerformed (ActionEvent e){
+						cl.show(mainPanel, "2a");
+					}});
+				mainPanel.add(balancePane, "bal");
+				cl.show(mainPanel, "bal");
 			}
 		});
 
+		
         add(mainPanel);
         pack();
         setVisible(true);
@@ -264,6 +277,16 @@ public class FirstWindow extends JFrame
     	payeeList.setFont(new Font("Times New Roman", Font.BOLD, 30));
     	amountText.setFont(new Font("Times New Roman", Font.BOLD, 30));
     	amount.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    }
+    
+    public void initializeBalanceCheck(){
+    	balancePane.setLayout(new GridLayout(2, 2));
+    	balancePane.setVisible(true);
+    	
+    	balance.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	balanceText.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	doneBalance.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	
     }
     
     public void setTestUser (String user){

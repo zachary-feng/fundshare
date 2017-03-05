@@ -170,7 +170,6 @@ public class FirstWindow extends JFrame
 			public void actionPerformed (ActionEvent e){
 				String tempX = name.getText();
 					setNameSelected(tempX);
-					System.out.println("user is " + tempX );
 				}
 		});
 		
@@ -178,7 +177,6 @@ public class FirstWindow extends JFrame
 			public void actionPerformed(ActionEvent e){
 				String tempX = newPassEnterHere.getText();
 				setPassword(tempX);
-				System.out.println(" pass is " + storePass);
 				SQLMain.registerUser(storeUser, storePass);
 				
 			}

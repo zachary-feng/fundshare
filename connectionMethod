@@ -203,7 +203,7 @@ public class SQLMain {
 		 String printAmount = "";
 		 int counter = SQLMain.getRowNumber(name);
 		 try {
-			 PreparedStatement statement = learning.connect().prepareStatement(sql);
+			 PreparedStatement statement = (PreparedStatement)learning.connect().prepareStatement(sql);
 			 ResultSet data = statement.executeQuery();
 			 while(data.next()) {
 				 printPayer = data.getString("payer");

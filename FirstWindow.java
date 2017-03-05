@@ -1,6 +1,7 @@
 package edu.utexas.se.swing.sample;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -8,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,51 +33,53 @@ public class FirstWindow extends JFrame
 	
 	//Initialize the options in the combo box
 	private String storeUser, storePass;
-	private JLabel newPass = new JLabel("Select a new password!");
+	private JLabel newPass = new JLabel("Select new password: ");
 	private JTextField newPassEnterHere = new JTextField ();
 	private JComboBox<String> nameList = SQLMain.listUsers();
+	
 	//In Main Menu: Username and Password
 	private JPanel passwordPanel = new JPanel();
-	private JLabel username = new JLabel ("Username: ");
-	private JLabel password = new JLabel ("Password: ");
+	private JLabel username = new JLabel ("Enter username: ");
+	private JLabel password = new JLabel ("Enter password: ");
 	private JTextField userInput = new JTextField();
 	private JTextField passInput = new JTextField();
 	private String testUser, testPass;
+	private JLabel warning = new JLabel("Wrong password, try again.");
 	
 	//Logout button
 	private JButton logout = new JButton("Log Out");
 	
 	//Create option to create a new user
-	private JButton addNewUser = new JButton ("Add New User");
+	private JButton addNewUser = new JButton ("Register");
 	private String newUserName;
 
 	//Set up option for when you are creating a new user
 	private JPanel newUserPane = new JPanel();
 	private JTextField name = new JTextField();
 	private JButton doneEntering = new JButton ("Return");
-	private JLabel enterName = new JLabel("Please enter your name here: ");
-	private JLabel instructions = new JLabel ("Press enter after you type your name.");
+	private JLabel enterName = new JLabel("Choose your username: ");
+	private JLabel instructions = new JLabel ("Press enter after each field, then press return.");
 
 	 //Create JPanel for the UserGUI main panel
 	private JPanel contentPane = new JPanel();
 	private JLabel thisUser = new JLabel(); 
 	
 	private JPanel paymentPane = new JPanel();
-	private JLabel payee = new JLabel ("Select who you owe money to");
+	private JLabel payee = new JLabel ("Select payee: ");
 	private JComboBox<String> payeeList = new JComboBox<String>();
-	private JLabel amountText = new JLabel ("How much do you owe them?");
+	private JLabel amountText = new JLabel ("Choose amount ($): ");
 	private JTextField amount = new JTextField();
 	private String chosenPayee;
 	private double amountRead;
 	
 	private JPanel balancePane = new JPanel();
 	private JButton doneBalance = new JButton ("Return");
-	private JLabel balanceText = new JLabel ("Your balance in dollars is: ");
+	private JLabel balanceText = new JLabel ("Your balance is ($): ");
 	private JLabel balance = new JLabel();
 	
 	private JPanel transactionHistoryPane = new JPanel();
 	private JButton doneHistory = new JButton ("Return");
-	private String[] columns = new String[]{"payer", "payee", "amount"};
+	private String[] columns = new String[]{"Payer", "Payee", "Amount ($)"};
 	private String[][] data;
 	private JTable table;
 	
@@ -88,8 +92,8 @@ public class FirstWindow extends JFrame
  
         super("Roommate Money List");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        makePayment.setFont(new Font("Times New Roman", Font.BOLD, 30));
-        addNewUser.setFont(new Font("Times New Roman", Font.BOLD, 30));
+        makePayment.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+        addNewUser.setFont(new Font("Book Antiqua", Font.BOLD, 30));
         
         //make sure mainPanel has the card layout
         mainPanel.setLayout(cl);
@@ -97,7 +101,7 @@ public class FirstWindow extends JFrame
         initializeFirstWindow();
 		
 		//Must initialize the nameList elements before showing
-		nameList.setFont(new Font ("Times New Roman", Font.BOLD, 40));
+		nameList.setFont(new Font ("Book Antiqua", Font.BOLD, 20));
 		
 		//Add the components to the first panel
 		firstWindowPane.add(nameList);
@@ -109,6 +113,8 @@ public class FirstWindow extends JFrame
 		passwordPanel.add(userInput);
 		passwordPanel.add(password);
 		passwordPanel.add(passInput);
+		passwordPanel.add(warning);
+		warning.setVisible(false);
 
 		
 		
@@ -121,8 +127,18 @@ public class FirstWindow extends JFrame
 		
 		passInput.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				if (SQLMain.verify(testUser, passInput.getText()))
+				if (SQLMain.verify(testUser, passInput.getText())){
+					warning.setVisible(false);
 					cl.show(mainPanel, "2a");
+					passwordPanel = new JPanel();
+					initializePasswordPanel();
+				}
+				else{
+					warning.setFont(new Font ("Book Antiqua", Font.BOLD, 15));
+					warning.setForeground(Color.RED);
+					warning.setVisible(true);
+					
+				}
 			}
 		});
 		
@@ -212,7 +228,7 @@ public class FirstWindow extends JFrame
 		c.gridy = 0;
 		
 		thisUser.setText((String)(userInput.getText()));
-		thisUser.setFont(new Font("Times New Roman", Font.BOLD, 30));
+		thisUser.setFont(new Font("Book Antiqua", Font.BOLD, 30));
 		
 		contentPane.add(thisUser, c);
 		c.gridy = 1;
@@ -242,7 +258,7 @@ public class FirstWindow extends JFrame
 				table.setRowHeight(50);
 				
 				initializeTransactionHistory();
-				table.getTableHeader().setFont(new Font("Times New Roman", Font.BOLD, 30));
+				table.getTableHeader().setFont(new Font("Book Antiqua", Font.BOLD, 30));
 				
 				transactionHistoryPane.setLayout(new BorderLayout());
 				transactionHistoryPane.add(table.getTableHeader(), BorderLayout.NORTH);
@@ -293,7 +309,8 @@ public class FirstWindow extends JFrame
 		
 		checkBalance.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				balance.setText(Double.toString(SQLMain.getBalance(userInput.getText())));
+				DecimalFormat df = new DecimalFormat("###.00");
+				balance.setText((String) df.format(SQLMain.getBalance(userInput.getText())));
 				initializeBalanceCheck();
 				balancePane.add(balanceText);
 				balancePane.add(balance);
@@ -326,12 +343,11 @@ public class FirstWindow extends JFrame
     }
     
     public void initializeTransactionHistory(){
-    	transactionHistoryPane.setLayout(new GridLayout(2, 5));
+    	transactionHistoryPane.setLayout(new GridLayout(5, 3));
     	transactionHistoryPane.setSize(1000,1000);
-    	
     	transactionHistoryPane.setVisible(true);
-    	doneHistory.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    	table.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	doneHistory.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	table.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     }
  
     public void initializeMakePayment(){
@@ -345,19 +361,19 @@ public class FirstWindow extends JFrame
 			if (!nameList.getItemAt(i).equals(userInput.getText()))
 				payeeList.addItem(nameList.getItemAt(i)); 
     	}
-    	payee.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    	payeeList.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    	amountText.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    	amount.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	payee.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	payeeList.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	amountText.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	amount.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     }
     
     public void initializeBalanceCheck(){
     	balancePane.setLayout(new GridLayout(2, 2));
     	balancePane.setVisible(true);
     	
-    	balance.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    	balanceText.setFont(new Font("Times New Roman", Font.BOLD, 30));
-    	doneBalance.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	balance.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	balanceText.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+    	doneBalance.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     	
     }
     
@@ -370,14 +386,14 @@ public class FirstWindow extends JFrame
     }
     
     public void initializePasswordPanel(){
-    	passwordPanel.setLayout(new GridLayout(2,3));
+    	passwordPanel.setLayout(new GridLayout(3,2));
 		passwordPanel.setSize(2000, 1000);
 		passwordPanel.setVisible(true);
 				
-		username.setFont(new Font ("Times New Roman", Font.BOLD, 30));
-		password.setFont(new Font ("Times New Roman", Font.BOLD, 30));
-		userInput.setFont(new Font ("Times New Roman", Font.BOLD, 30));
-		passInput.setFont(new Font ("Times New Roman", Font.BOLD, 30));
+		username.setFont(new Font ("Book Antiqua", Font.BOLD, 30));
+		password.setFont(new Font ("Book Antiqua", Font.BOLD, 30));
+		userInput.setFont(new Font ("Book Antiqua", Font.BOLD, 30));
+		passInput.setFont(new Font ("Book Antiqua", Font.BOLD, 30));
     }
     
     public void setNameSelected(String tempX){
@@ -408,11 +424,11 @@ public class FirstWindow extends JFrame
 		newUserPane.setLayout(new GridLayout(3, 2));
 		
 		//Formatting font
-		enterName.setFont(new Font("Times New Roman", Font.BOLD, 30));
-		name.setFont(new Font("Times New Roman", Font.BOLD, 30));
-		doneEntering.setFont(new Font("Times New Roman", Font.BOLD, 30));
-		newPassEnterHere.setFont(new Font("Times New Roman", Font.BOLD, 30));
-		newPass.setFont(new Font ("Times New Roman", Font.BOLD, 30));
+		enterName.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+		name.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+		doneEntering.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+		newPassEnterHere.setFont(new Font("Book Antiqua", Font.BOLD, 30));
+		newPass.setFont(new Font ("Book Antiqua", Font.BOLD, 30));
     }
     
     public void initializeMainFrame(){
@@ -424,11 +440,11 @@ public class FirstWindow extends JFrame
     }
     
     public void initializeCheckBalance(){
-    	checkBalance.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	checkBalance.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     }
     
     public void initializeTransactionLabel(){
-    	transactionHistory.setFont(new Font("Times New Roman", Font.BOLD, 30));
+    	transactionHistory.setFont(new Font("Book Antiqua", Font.BOLD, 30));
     }
     
     private static boolean isDouble(String s){
